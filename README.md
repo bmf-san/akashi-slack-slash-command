@@ -1,10 +1,11 @@
-# go-slack-app-on-gae-boilerplate
-This is a slack app boilerplate built with go for Google app engine.
+# akashi-slack-slash-command
+This is a slack slash command for Akashi.
 
 # Get started
 Before you started, you need to set up gcloud command, and able to use GAE.
 
 ## Slack app
+<!-- TODO: 手順スクショ撮っておきたい -->
 ### Create a new slack app
 Go to `https://api.slack.com/apps`, and create new app from scratch.
 
@@ -24,7 +25,7 @@ Go to your slack app dashboard. Basic Infomation > Install you app.
 ### Copy a secrets.yaml.example, and edit it.
 `cp .env.yaml.example .env.yaml`
 
-Set your `SLACK_SIGINING_SECRET`.
+Set your `SLACK_SIGINING_SECRET` and `AKASHI_COMPANY_ID`.
 
 You can see `SLACK_SIGINING_SECRET` on your slack app dashboard. Basic Infomation > App Credentials
 
@@ -32,9 +33,8 @@ You can see `SLACK_SIGINING_SECRET` on your slack app dashboard. Basic Infomatio
 `make deploy`
 
 ## Run a slash command on your slack
-`/hello Bob`
-
-Slask says `Bob`.
+<!-- TODO: コマンドリファレンス書く -->
+`/akashi 出勤`
 
 ![スクリーンショット 2022-05-26 9 04 12](https://user-images.githubusercontent.com/13291041/170388726-dfa6406f-f347-4f8d-9470-509fa0fb1c77.png)
 

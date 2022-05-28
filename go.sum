@@ -51,6 +51,8 @@ github.com/GoogleCloudPlatform/functions-framework-go v1.5.3 h1:Xx8uWT4hjgbjuXex
 github.com/GoogleCloudPlatform/functions-framework-go v1.5.3/go.mod h1:pq+lZy4vONJ5fjd3q/B6QzWhfHPAbuVweLpxZzMOb9Y=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
+github.com/bmf-san/akashigo v0.0.0-20220529040406-4121fa1e1ff3 h1:uCj0GXhfH0lPCPnx7igko3p0otfUIv/K5PyrVjLLHSA=
+github.com/bmf-san/akashigo v0.0.0-20220529040406-4121fa1e1ff3/go.mod h1:2OeDmfG3wxR4W1+wH6HbwccUw7v7FWFVD08KYmHLod4=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
