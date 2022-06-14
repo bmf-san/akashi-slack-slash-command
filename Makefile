@@ -13,7 +13,7 @@ deploy: ## deploy
 	rm -rf vendor
 	GOPROXY=direct GOSUMDB=off go mod tidy
 	go mod vendor
-	gcloud functions deploy go-slack-app-on-gae-boilerplate \
+	gcloud functions deploy $(FUNC) \
 		--entry-point Slash \
 		--runtime go116 \
 		--trigger-http \
@@ -21,4 +21,4 @@ deploy: ## deploy
 		--region asia-northeast1 \
 		--timeout 540s \
 		--source .
-	gcloud functions describe go-slack-app-on-gae-boilerplate --region asia-northeast1
+	gcloud functions describe $(FUNC) --region asia-northeast1

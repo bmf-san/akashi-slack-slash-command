@@ -1,6 +1,8 @@
 package SlackApi
 
 import (
+	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"flag"
@@ -14,18 +16,55 @@ import (
 	"github.com/bmf-san/akashigo/stamp"
 	"github.com/bmf-san/akashigo/types"
 	"github.com/slack-go/slack"
+	"google.golang.org/api/option"
+	"google.golang.org/api/sheets/v4"
 )
 
 var (
 	signingSecret string
-	apiclient     *client.Client
+	spreadSheetID string
+	sheetClient   *sheets.Service
 )
 
 func init() {
-	// TODO: apiTokenはストレージから取得するようにするので、これは後で破棄
-	apiToken := os.Getenv("AKASHI_API_TOKEN")
-	companyID := os.Getenv("AKASHI_COMPANY_ID")
-	apiclient = client.New(apiToken, companyID)
+	spreadSheetID = os.Getenv("SPREAD_SHEET_ID")
+	serviceAccount := os.Getenv("SERVICE_ACCOUNT")
+
+	dec, err := base64.StdEncoding.DecodeString(serviceAccount)
+	if err != nil {
+		log.Fatal(err)
+	}
+	cred := option.WithCredentialsJSON(dec)
+
+	srv, err := sheets.NewService(context.TODO(), cred)
+	if err != nil {
+		log.Fatal(err)
+		panic(err)
+	}
+
+	sheetClient = srv
+}
+
+func getAkashiClient(userName string, sheetClient *sheets.Service) (*client.Client, error) {
+	resp, err := sheetClient.Spreadsheets.Values.Get(spreadSheetID, "シート1!A:D").Do()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(resp.Values) == 0 {
+		return nil, errors.New("No data")
+	}
+
+	var companyID string
+	var apiToken string
+	for _, row := range resp.Values {
+		if row[1].(string) == userName {
+			companyID = row[2].(string)
+			apiToken = row[3].(string)
+		}
+	}
+
+	return client.New(apiToken, companyID), nil
 }
 
 func Slash(w http.ResponseWriter, r *http.Request) {
@@ -66,11 +105,18 @@ func Slash(w http.ResponseWriter, r *http.Request) {
 
 		// TODO: paramsのバリデーションをする
 
+		apiClient, err := getAkashiClient(s.UserName, sheetClient)
+		if err != nil {
+			log.Fatal(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
 		model := &stamp.Stamp{
-			Client: apiclient,
+			Client: apiClient,
 		}
 		s, err := model.Stamp(stamp.StampParams{
-			Token:    apiclient.APIToken,
+			Token:    apiClient.APIToken,
 			Type:     types.StampNumber(string(p)),
 			Timezone: "+09:00",
 		})
@@ -87,9 +133,10 @@ func Slash(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// TODO: 期限切れの場合はトークン再発行APIをコールして、再度リクエスト
-		//
 
 		w.Header().Set("Content-Type", "application/json")
+
+		// TODO: レスポンス内容はなんかいい感じに変える
 		w.Write(b)
 	default:
 		log.Fatal(errors.New("Invalid command"))
