@@ -115,6 +115,12 @@ make deploy
 | /akashi 退勤 | 退勤を打刻します。                                                                                                             |
 ※Slash CommandのCommandを`akashi`とした場合を想定。
 
+## 運用
+トークンの期限切れた場合は、手動で再発行し、Spreadsheetの各自のトークンを更新する必要がある。
+Akashiのトークンの有効期限は発行から1ヶ月であるため、月1回の更新が必要となる。
+トークン再発行の自動化については以下issue参照。
+cf. https://github.com/bmf-san/akashi-slack-slash-command/issues/6
+
 # コスト
 [Cloud Functions - Cloudfunctionsの料金](https://cloud.google.com/functions/pricing?hl=ja)
 

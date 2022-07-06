@@ -3,9 +3,9 @@ package SlackApi
 import (
 	"context"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"flag"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -21,7 +21,6 @@ import (
 )
 
 var (
-	signingSecret string
 	spreadSheetID string
 	sheetClient   *sheets.Service
 )
@@ -52,7 +51,7 @@ func getAkashiClient(userName string, sheetClient *sheets.Service) (*client.Clie
 	}
 
 	if len(resp.Values) == 0 {
-		return nil, errors.New("No data")
+		return nil, errors.New("no data")
 	}
 
 	var companyID string
@@ -95,16 +94,6 @@ func Slash(w http.ResponseWriter, r *http.Request) {
 
 	switch s.Command {
 	case "/akashi":
-		params := &slack.Msg{Text: s.Text}
-		p, err := json.Marshal(params)
-		if err != nil {
-			log.Fatal(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		// TODO: paramsのバリデーションをする
-
 		apiClient, err := getAkashiClient(s.UserName, sheetClient)
 		if err != nil {
 			log.Fatal(err)
@@ -115,9 +104,9 @@ func Slash(w http.ResponseWriter, r *http.Request) {
 		model := &stamp.Stamp{
 			Client: apiClient,
 		}
-		s, err := model.Stamp(stamp.StampParams{
+		stamp, err := model.Stamp(stamp.StampParams{
 			Token:    apiClient.APIToken,
-			Type:     types.StampNumber(string(p)),
+			Type:     types.StampNumber(s.Text),
 			Timezone: "+09:00",
 		})
 		if err != nil {
@@ -126,20 +115,22 @@ func Slash(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		b, err := json.Marshal(s)
-		if err != nil {
-			log.Fatal(err)
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-
-		// TODO: 期限切れの場合はトークン再発行APIをコールして、再度リクエスト
-
 		w.Header().Set("Content-Type", "application/json")
-
-		// TODO: レスポンス内容はなんかいい感じに変える
-		w.Write(b)
+		if stamp.Success {
+			typeStr := types.StampText(stamp.Response.Type)
+			w.Write([]byte(fmt.Sprintf("%s %s", typeStr, stamp.Response.StampedAt)))
+		} else {
+			var msg string
+			for _, v := range stamp.Errors {
+				msg += v.Message
+				if v.Code == "ERR300003" {
+					msg += "スプレッドシートのakashi_api_tokenを更新してください。"
+				}
+			}
+			w.Write([]byte(msg))
+		}
 	default:
-		log.Fatal(errors.New("Invalid command"))
+		log.Fatal(errors.New("invalid command"))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
