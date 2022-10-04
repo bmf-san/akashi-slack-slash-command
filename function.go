@@ -67,10 +67,7 @@ func getAkashiClient(userName string, sheetClient *sheets.Service) (*client.Clie
 }
 
 func Slash(w http.ResponseWriter, r *http.Request) {
-	var signingSecret string
-	flag.StringVar(&signingSecret, "secret", os.Getenv("SLACK_SIGINING_SECRET"), "Your Slack app's signing secret")
-	flag.Parse()
-
+	signingSecret := os.Getenv("SLACK_SIGINING_SECRET")
 	verifier, err := slack.NewSecretsVerifier(r.Header, signingSecret)
 	if err != nil {
 		log.Fatal(err)
