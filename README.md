@@ -127,8 +127,11 @@ cf. https://github.com/bmf-san/akashi-slack-slash-command/issues/6
 # クォータ
 [Sheets API - Usage limits](https://developers.google.com/sheets/api/limits)
 
-# References
+# 参考
 - [Google Cloud - Go on Google App Engine](https://cloud.google.com/appengine/docs/go)
 - [Google Cloud - App Engine pricing](https://cloud.google.com/appengine/pricing)
 - [www.serversus.work - Google App Engine(GAE)を無料枠で収めるための勘所](https://www.serversus.work/topics/p1uaj4jrv8b5x70hwe6p/)
 - [github.com - slack-go/slack](https://github.com/slack-go/slack)
+
+# 関連
+- [bmf-tech.com - Cloud Functionsを使ってSlack AppのSlash Commandを実装](https://bmf-tech.com/posts/Cloud%20Functions%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6Slack%20App%E3%81%AESlash%20Command%E3%82%92%E5%AE%9F%E8%A3%85)
